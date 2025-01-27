@@ -1,0 +1,118 @@
+from appium import webdriver
+from time import sleep
+
+# Appium server URL
+APPIUM_SERVER = "http://127.0.0.1:4723/wd/hub"
+
+# Desired Capabilities
+capabilities = {
+    "platformName": "Android",
+    "platformVersion": "12.0",  # Update with the correct Android version
+    "deviceName": "emulator-5554",  # Update with your emulator or device name
+    "automationName": "UiAutomator2",
+    "app": "/path/to/reddit.apk",  # Replace with Reddit/X APK path
+    "noReset": True  # Preserve the app state
+}
+
+# Initialize Appium driver
+driver = webdriver.Remote(APPIUM_SERVER, capabilities)
+
+def reddit_post():
+    """Post on Reddit."""
+    try:
+        # Wait for the app to load
+        sleep(5)
+        
+        # Locate and click the "Create Post" button
+        driver.find_element_by_accessibility_id("Create Post").click()
+        sleep(2)
+        
+        # Enter post title and content
+        driver.find_element_by_id("com.reddit.frontpage:id/post_title").send_keys("Hello Reddit!")
+        driver.find_element_by_id("com.reddit.frontpage:id/post_content").send_keys("This is an automated post using Appium.")
+        
+        # Submit the post
+        driver.find_element_by_id("com.reddit.frontpage:id/submit_post").click()
+        print("Reddit post created successfully!")
+        sleep(5)
+    except Exception as e:
+        print("Error in Reddit post:", e)
+
+def reddit_like_comment():
+    """Like and comment on a Reddit post."""
+    try:
+        # Like a post
+        driver.find_element_by_xpath("//android.widget.TextView[@content-desc='Like']").click()
+        sleep(2)
+        
+        # Comment on a post
+        driver.find_element_by_xpath("//android.widget.TextView[@content-desc='Comment']").click()
+        driver.find_element_by_id("com.reddit.frontpage:id/comment_input").send_keys("This is a test comment.")
+        driver.find_element_by_id("com.reddit.frontpage:id/submit_comment").click()
+        print("Liked and commented on a Reddit post successfully!")
+        sleep(5)
+    except Exception as e:
+        print("Error in Reddit like/comment:", e)
+
+def reddit_dm():
+    """Send a direct message on Reddit."""
+    try:
+        # Navigate to the messages section
+        driver.find_element_by_accessibility_id("Messages").click()
+        sleep(2)
+        
+        # Enter recipient and message
+        driver.find_element_by_id("com.reddit.frontpage:id/recipient").send_keys("recipient_username")
+        driver.find_element_by_id("com.reddit.frontpage:id/message_content").send_keys("Hello! This is a test message.")
+        driver.find_element_by_id("com.reddit.frontpage:id/send_message").click()
+        print("Reddit DM sent successfully!")
+        sleep(5)
+    except Exception as e:
+        print("Error in Reddit DM:", e)
+
+def x_post_like_dm():
+    """Post, like, and DM on X.com (Twitter)."""
+    try:
+        # Wait for the app to load
+        sleep(5)
+        
+        # Post a tweet
+        driver.find_element_by_id("com.twitter.android:id/tweet_text").send_keys("This is an automated tweet.")
+        driver.find_element_by_id("com.twitter.android:id/send_tweet").click()
+        print("Tweet posted successfully!")
+        sleep(5)
+        
+        # Like a tweet
+        driver.find_element_by_xpath("//android.widget.TextView[@content-desc='Like']").click()
+        print("Tweet liked successfully!")
+        sleep(2)
+        
+        # Send a direct message
+        driver.find_element_by_accessibility_id("Messages").click()
+        sleep(2)
+        driver.find_element_by_id("com.twitter.android:id/search").send_keys("recipient_username")
+        driver.find_element_by_id("com.twitter.android:id/message_text").send_keys("Hello! This is a test message.")
+        driver.find_element_by_id("com.twitter.android:id/send_message").click()
+        print("Twitter DM sent successfully!")
+        sleep(5)
+    except Exception as e:
+        print("Error in X.com automation:", e)
+
+# Main execution
+if __name__ == "__main__":
+    try:
+        print("Starting automation...")
+        
+        # Call Reddit automation functions
+        reddit_post()
+        reddit_like_comment()
+        reddit_dm()
+        
+        # Call X.com automation functions
+        x_post_like_dm()
+        
+    except Exception as e:
+        print("Error during automation:", e)
+    finally:
+        # Quit the driver
+        driver.quit()
